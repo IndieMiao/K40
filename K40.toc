@@ -1,0 +1,7 @@
+## Interface: 11200
+## Title: K40
+## Author: Mythblack
+## Notes: Monitor some debuff for Kara40 in Turtle WOW
+## Version: 0.0001
+
+K40.xml
