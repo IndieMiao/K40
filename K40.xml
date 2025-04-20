@@ -30,7 +30,7 @@
         </Frames>
     </Frame>
 
-    <Frame name="K40UI" hidden="false" toplevel="true"
+    <Frame name="K40UI" hidden="true" toplevel="true"
            parent="UIParent" movable="true" enableMouse="false" resizable="false">
         <Size>
             <AbsDimension x="96" y="96"/>
