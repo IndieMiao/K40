@@ -30,12 +30,14 @@ L["Banshee Curse"] = "Banshee Curse"   -- for testing
 L["Corruption of Medivh"] = "Corruption of Medivh"
 L["DEBUFF_ACTIVE_TOKEN"] = "You are afflicted by "
 L["DEBUFF_FADE_TOKEN"] = " fades from you."
+L["YELL"] = "YELL"
 
 if (GetLocale() == "zhCN") then
     L["Corruption of Medivh"] = "麦迪文的腐化"
-    L["Banshee Curse"] = "Banshee Curse"   -- for testing
-    L["DEBUFF_ACTIVE_TOKEN"] = "You are afflicted by "
-    L["DEBUFF_FADE_TOKEN"] = " fades from you."
+    L["Banshee Curse"] = "女妖诅咒"   -- for testing
+    L["DEBUFF_ACTIVE_TOKEN"] = "你受到了"
+    L["DEBUFF_FADE_TOKEN"] = "效果从你身上消失了."
+    L["YELL"] = "大喊"
 end
 local texureOption = {
     x = 0,
@@ -61,8 +63,10 @@ local function DebugLog(message)
 end
 
 local function AnnounceDebuff(debuffName)
-    SendChatMessage(string.format(debuffName), "YELL")
-    DebugLog("Announced debuff: "..debuffName)
+    SendChatMessage(string.format(debuffName),"SAY")
+    if isK40Debug then
+        DebugLog("Announced debuff: "..debuffName)
+    end
 end
 
 local function IsDebuffActived(message)
