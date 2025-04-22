@@ -11,13 +11,11 @@ K40:SetScript("OnEvent", function()
     end
 end)
 
---K40:SetPoint('CENTER', UIParent, 'CENTER', 0, -30)
---K40:SetWidth(300)
---K40:SetHeight(300)
 K40:RegisterEvent('COMBAT_TEXT_UPDATE')
 K40:RegisterEvent('PLAYER_DEAD')
 K40:RegisterEvent('CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE')
 K40:RegisterEvent('CHAT_MSG_SPELL_AURA_GONE_SELF')
+K40:RegisterEvent('CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE')
 
 local isK40Debug = false
 
@@ -29,6 +27,7 @@ local L = {}
 L["Banshee Curse"] = "Banshee Curse"   -- for testing
 L["Corruption of Medivh"] = "Corruption of Medivh"
 L["DEBUFF_ACTIVE_TOKEN"] = "You are afflicted by "
+L["DEBUFF_RAID_ACTIVE_TOKEN"] = " is afflicted by "
 L["DEBUFF_FADE_TOKEN"] = " fades from you."
 L["YELL"] = "YELL"
 
@@ -37,6 +36,7 @@ if (GetLocale() == "zhCN") then
     L["Banshee Curse"] = "女妖诅咒"   -- for testing
     L["DEBUFF_ACTIVE_TOKEN"] = "你受到了"
     L["DEBUFF_FADE_TOKEN"] = "效果从你身上消失了."
+    L["DEBUFF_RAID_ACTIVE_TOKEN"] = "受到了"
     L["YELL"] = "大喊"
 end
 local texureOption = {
@@ -69,9 +69,26 @@ local function AnnounceDebuff(debuffName)
     end
 end
 
+local function WarningDebuffInRaid(playerName, debuffName)
+    SendChatMessage(string.format( ">> %s 中了[%s]!<<", playerName, debuffName ),"RAID_WARNING")
+end  
+
+function CheckDebuffMessage(message)
+    for debuffName, _ in pairs(DEBUFFTALBE) do
+        local pattern = "(.+) is afflicted by " .. string.gsub(debuffName, "[%(%)%.%%%+%-%*%?%[%]%^%$]", "%%%0")
+        local start, finish, player = string.find(message, pattern)
+
+        if player then
+            return player, debuffName 
+        end
+    end
+    return nil
+end
+
+
 local function IsDebuffActived(message)
     for deBuffName, _ in pairs(DEBUFFTALBE) do
-        if string.find(message, L["DEBUFF_ACTIVE_TOKEN"].. deBuffName) then
+        if string.find(message, L["DEBUFF_ACTIVE_TOKEN"] .. deBuffName) then
             return deBuffName, true
         end
     end
@@ -101,14 +118,6 @@ local function CreateDebuffTexture(debuffName)
     AnnounceDebuff(debuffName)
     K40.DebuffImage:Show()
 
-    --local debuffTexture = K40:CreateTexture(nil, "OVERLAY")
-    --debuffTexture:SetTexture(config.texture)
-    --debuffTexture:SetWidth(texureOption.width)
-    --debuffTexture:SetHeight(texureOption.height)
-    --debuffTexture:SetPoint('Center', K40,texureOption.pos, texureOption.x, texureOption.y)
-    --debuffTexture:SetAlpha(texureOption.alpha)
-    --debuffTexture:SetBlendMode(texureOption.Blend)
-    --K40.DebuffFrames[debuffName] = debuffTexture
     if K40.locked then
         K40UI:Show()
     else
@@ -138,6 +147,7 @@ K40:SetScript('OnEvent', function()
                 CleanAllTexture()
                 if isK40Debug then DebugLog("Got debuff: " .. debuffName ) end
                 CreateDebuffTexture(debuffName)
+                WarningDebuffInRaid(UnitName("player"), debuffName)
             end
         end
 
@@ -149,6 +159,16 @@ K40:SetScript('OnEvent', function()
                     if isK40Debug then DebugLog("K40: Debuff Fade: ".. debuffName ) end
                 end
             end
+    end
+    if event == 'CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE' then
+        if arg1 then
+            local playerName, debuffName = CheckDebuffMessage(arg1)
+            if playerName  then
+                CleanAllTexture()
+                if isK40Debug then DebugLog(playerName .. "Got debuff: " .. debuffName ) end
+                WarningDebuffInRaid(playerName, debuffName)
+            end
+        end
     end
 end)
 
