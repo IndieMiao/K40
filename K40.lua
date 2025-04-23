@@ -73,7 +73,7 @@ local function WarningDebuffInRaid(playerName, debuffName)
     SendChatMessage(string.format( ">> %s 中了[%s]!<<", playerName, debuffName ),"RAID_WARNING")
 end  
 
-function CheckDebuffMessage(message)
+local function CheckDebuffMessage(message)
     for debuffName, _ in pairs(DEBUFFTALBE) do
         local pattern = "(.+) is afflicted by " .. string.gsub(debuffName, "[%(%)%.%%%+%-%*%?%[%]%^%$]", "%%%0")
         local start, finish, player = string.find(message, pattern)
