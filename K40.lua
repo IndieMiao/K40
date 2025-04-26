@@ -23,9 +23,13 @@ K40.DebuffImage = nil
 
 
 local L = {}
-
+--
 L["Banshee Curse"] = "Banshee Curse"   -- for testing
+-- 麦迪文的腐化
 L["Corruption of Medivh"] = "Corruption of Medivh"
+-- 黑暗屈从 象棋
+L["Dark Subservience"] = "Dark Subservience"
+-- tokens
 L["DEBUFF_ACTIVE_TOKEN"] = "You are afflicted by "
 L["DEBUFF_RAID_ACTIVE_TOKEN"] = " is afflicted by "
 L["DEBUFF_FADE_TOKEN"] = " fades from you."
@@ -34,6 +38,8 @@ L["YELL"] = "YELL"
 if (GetLocale() == "zhCN") then
     L["Corruption of Medivh"] = "麦迪文的腐化"
     L["Banshee Curse"] = "女妖诅咒"   -- for testing
+    L["Dark Subservience"] = "黑暗屈从"
+    -- Tokens
     L["DEBUFF_ACTIVE_TOKEN"] = "你受到了"
     L["DEBUFF_FADE_TOKEN"] = "效果从你身上消失了."
     L["DEBUFF_RAID_ACTIVE_TOKEN"] = "受到了"
